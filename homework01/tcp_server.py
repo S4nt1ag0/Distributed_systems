@@ -5,7 +5,13 @@ from tcp_thread import threaded
 
 from _thread import *
 
+import cache_control
+
 CACHE_SIZE = 64
+
+cache_control.cache_size = CACHE_SIZE
+cache_control.cache = dict()
+cache_control.cache_available = CACHE_SIZE
 
 HOST = sys.argv[1]             #host
 PORT = int(sys.argv[2])        #port
@@ -38,6 +44,3 @@ finally:
     print("SERVER OFF %s:%s" % (HOST, PORT))
     # close connection server
     s.close()
-
-cache = dict()
-cache_available = CACHE_SIZE
