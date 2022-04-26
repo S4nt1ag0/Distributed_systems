@@ -4,14 +4,18 @@ import sys
 from tcp_thread import threaded
 
 from _thread import *
+import threading
 
 import cache_control
+import lock_control
 
 CACHE_SIZE = 64
 
 cache_control.cache_size = CACHE_SIZE
 cache_control.cache = dict()
 cache_control.cache_available = CACHE_SIZE
+
+lock_control.lock = threading.Lock()
 
 HOST = sys.argv[1]             #host
 PORT = int(sys.argv[2])        #port

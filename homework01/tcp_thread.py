@@ -1,10 +1,13 @@
 # thread para instancia do client
 
 import pickle
-from time import sleep
-import file_control
 
+from filelock import FileLock
+from time import sleep
+
+import file_control
 import cache_control
+import lock_control
 
 BUFFER_SIZE = 1024
 
@@ -29,6 +32,8 @@ def threaded(c, addr, directory):
     else:
         print("[port: %s] client is requesting file '%s'" % (
             addr[1], res))
+        # ativando o lock
+        lock_control.lock.acquire()
 
         # check if file exists in the directory or cache
         if file_control.isExist(directory + res) or res in cache_control.cache:
@@ -40,14 +45,15 @@ def threaded(c, addr, directory):
                 c.send(package)
 
                 # serialization of the file for sending
-                with open(directory + res, 'rb') as f:
-                    package = f.read(BUFFER_SIZE)
-                    while package:
-                        # sending file packages
-                        c.send(package)
+                with FileLock(directory + res + '.lock'):
+                    with open(directory + res, 'rb') as f:
                         package = f.read(BUFFER_SIZE)
-                    sleep(1)
-                    f.close()
+                        while package:
+                            # sending file packages
+                            c.send(package)
+                            package = f.read(BUFFER_SIZE)
+                        sleep(1)
+                        f.close()
 
                 print("[port: %s] sent file '%s'" % (
                             addr[1], res))
@@ -86,6 +92,9 @@ def threaded(c, addr, directory):
 
                     print("[port: %s] file '%s' on cache" % (addr[1], res))
 
+                # block cache file
+                cache_control.cache[res][2] = True
+
                 # query cache file to be sent
                 file_in_cache = cache_control.cache[res]
                 size_file = file_in_cache[0]
@@ -112,6 +121,9 @@ def threaded(c, addr, directory):
             # warns that file does not exist
             package = pickle.dumps(False)
             c.send(package)
+
+        #disabilitando o lock
+        lock_control.lock.release()
 
     print("[port: %s] closed connection with client" % (addr[1]))
     c.close()
