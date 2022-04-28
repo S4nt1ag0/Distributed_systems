@@ -11,22 +11,22 @@ import lock_control
 
 BUFFER_SIZE = 1024
 
-def threaded(c, addr, directory):
+def threaded(clientSocket, addr, directory):
     # variaveis globais
 
     # recebendo a request do client
-    data = c.recv(BUFFER_SIZE)
+    data = clientSocket.recv(BUFFER_SIZE)
     # deserializando a request
     res = pickle.loads(data)
     if res == 'list':
         print("[port: %s] checking files on cache" % (addr[1]))
         if len(cache_control.cache) == 0:
-            c.send(pickle.dumps('cache is empty'))
+            clientSocket.send(pickle.dumps('cache is empty'))
         else:
             package = '\nFiles on cache:\n\n'
             for file in cache_control.cache.keys():
                 package += file + '\n'
-            c.send(pickle.dumps(package))
+            clientSocket.send(pickle.dumps(package))
 
             print("[port: %s] list files on cache sended to client" % (addr[1]))
     else:
@@ -42,7 +42,7 @@ def threaded(c, addr, directory):
                 print("[port: %s] sending file '%s' to client" % (addr[1], res))
                 # prepares client to receive file
                 package = pickle.dumps(True)
-                c.send(package)
+                clientSocket.send(package)
 
                 # serialization of the file for sending
                 with FileLock(directory + res + '.lock'):
@@ -50,7 +50,7 @@ def threaded(c, addr, directory):
                         package = f.read(BUFFER_SIZE)
                         while package:
                             # sending file packages
-                            c.send(package)
+                            clientSocket.send(package)
                             package = f.read(BUFFER_SIZE)
                         sleep(1)
                         f.close()
@@ -69,7 +69,7 @@ def threaded(c, addr, directory):
                     if cache_control.cache_available < size_file:
                         for key_file in list(cache_control.cache):
                             # remove file from cache
-                            if not cache_control.cache[key_file][2]:
+                            if not cache_control.cache[key_file][2]: #verificando se o arquivo não esta com lock
                                 print("[port: %s] remove a file '%s' by cache" % (
                                     addr[1], key_file))
                                 file_removed = cache_control.cache.pop(key_file)
@@ -108,10 +108,10 @@ def threaded(c, addr, directory):
                 print("[port: %s] sending file '%s' to client through the cache" % (
                     addr[1], res))
                 package = pickle.dumps(True)
-                c.send(package)
+                clientSocket.send(package)
 
                 for package in packages:
-                    c.send(package)
+                    clientSocket.send(package)
                 sleep(1)
                 print("[port: %s] sent file '%s' to client" % (
                     addr[1], res))
@@ -120,10 +120,10 @@ def threaded(c, addr, directory):
             print("[port: %s] file '%s' not found" % (addr[1], res))
             # warns that file does not exist
             package = pickle.dumps(False)
-            c.send(package)
+            clientSocket.send(package)
 
         #disabilitando o lock
         lock_control.lock.release()
 
     print("[port: %s] closed connection with client" % (addr[1]))
-    c.close()
+    clientSocket.close()

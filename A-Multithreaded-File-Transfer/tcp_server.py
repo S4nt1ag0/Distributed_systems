@@ -37,14 +37,14 @@ print("set: 'ctrl + c' to kill server\n")
 try:
     while True:
         # aceitando conexão com o client
-        c, addr = s.accept()
+        clientSocket, addr = s.accept()
         print('[port: %s] new connection with client' % (addr[1]))
 
         # a new thread client
-        start_new_thread(threaded, (c, addr, directory))
+        start_new_thread(threaded, (clientSocket, addr, directory))
 except:
     pass
 finally:
     print("SERVER OFF %s:%s" % (HOST, PORT))
-    # close connection server
+    # fechando a conexão do servidor quando o server encerra
     s.close()
