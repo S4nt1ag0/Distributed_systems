@@ -33,11 +33,11 @@ python tcp_client.py localhost 9098 image.jpg .
 or
 python tcp_client.py localhost 9098 list
 ```
+<img src="./assets/demonstração.gif" alt="demo" height="300">
 
-<video width="320" height="240" controls>
-  <source src="./assets/demostration.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video>
+this image proves the multithreaded operation that was not evidenced in the video
+
+<img src="./assets/multithreadProva.jpg" alt="proves" height="300">
 
  <a id="aboutProject" />About The Project
 - 
@@ -126,7 +126,7 @@ On the thread all the main processing of the request is done. It is the core of 
   - get the keys from the tuples present in the cache and return to the client a list of these keys
 - else:
   - check if the message sent by the user is a tuple key present in the cache or if there is a file with the same name as the message inside the server's search directory
-    - If the file does not exist in the cache and its size is greater than the total size of the cache, only the file present in the directory is serialized and sent.
+    - If the size of file is greater than the total size of the cache, the file in the directory is serialized and sent.
     - If the file does not exist in the cache but its size allows it to be stored in the cache, it is inserted into it.
       - If there is space it will be placed in the cache and the lock for this file activated.
       - If there is no space, the unblocked files from the cache will be deleted until the cache has enough space to store this new file.

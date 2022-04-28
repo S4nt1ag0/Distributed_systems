@@ -1,16 +1,15 @@
 import os
 
-# veriicar se aquivo existe em diretório
+# verificando se aquivo existe no diretório
 def isExist(file_path):
     return os.path.isfile(file_path)
 
-# retorna tamanho do arquivo em MB
+# pegando o tamanho do arquivo
 def getFile_size(file_path):
     return os.path.getsize(file_path)/(1024 * 1024)
 
-# retorna um dicionário com o nome e tamanho dos arquivos existentes
+# retornando o nome e tamanho dos arquivos
 def list_files_dir(dir_files):
-    files = dict()
 
     os.environ['HOME']
     files = os.listdir(dir_files)

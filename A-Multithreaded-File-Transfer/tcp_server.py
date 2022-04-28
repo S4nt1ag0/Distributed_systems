@@ -40,7 +40,7 @@ try:
         clientSocket, addr = s.accept()
         print('[port: %s] new connection with client' % (addr[1]))
 
-        # a new thread client
+        # iniciando uma nova thread para a conexão estabelecida
         start_new_thread(threaded, (clientSocket, addr, directory))
 except:
     pass

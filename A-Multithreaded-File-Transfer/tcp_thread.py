@@ -35,21 +35,21 @@ def threaded(clientSocket, addr, directory):
         # ativando o lock
         lock_control.lock.acquire()
 
-        # check if file exists in the directory or cache
+        # verificando se o arquivo existe no diretorio ou na cache
         if file_control.isExist(directory + res) or res in cache_control.cache:
-            # checks if file is larger than the cache
-            if file_control.getFile_size(directory + res) > cache_control.cache_size and res not in cache_control.cache:
+            # verificando se o tamanho do arquivo não excede o tamanho maximo da cache
+            if file_control.getFile_size(directory + res) > cache_control.cache_size:
                 print("[port: %s] sending file '%s' to client" % (addr[1], res))
-                # prepares client to receive file
+                # preparando o cliente para receber o arquivo
                 package = pickle.dumps(True)
                 clientSocket.send(package)
 
-                # serialization of the file for sending
+                # bloqueando e serializando o arquivo
                 with FileLock(directory + res + '.lock'):
                     with open(directory + res, 'rb') as f:
                         package = f.read(BUFFER_SIZE)
                         while package:
-                            # sending file packages
+                            # enviando os bytes do arquivo
                             clientSocket.send(package)
                             package = f.read(BUFFER_SIZE)
                         sleep(1)
@@ -58,14 +58,14 @@ def threaded(clientSocket, addr, directory):
                 print("[port: %s] sent file '%s'" % (
                             addr[1], res))
             else:
-                # check if file exists in cache
+                # verificando se o arquivo existe na cache
                 if res not in cache_control.cache:
 
                     print("[port: %s] add file '%s' on cache" % (
                         addr[1], res))
                     size_file = file_control.getFile_size(directory + res)
 
-                    # free up cache space
+                    # removendo alguns arquivos na cache para salvar o novo arquivo
                     if cache_control.cache_available < size_file:
                         for key_file in list(cache_control.cache):
                             # remove file from cache
@@ -76,7 +76,7 @@ def threaded(clientSocket, addr, directory):
                                 file_removed_size = file_removed[0]
                                 cache_control.cache_available += file_removed_size
 
-                    # serialize file
+                    # serializando o arquivo
                     packages = []
                     with open(directory + res, 'rb') as f:
                         package = f.read(BUFFER_SIZE)
@@ -86,25 +86,24 @@ def threaded(clientSocket, addr, directory):
                         sleep(1)
                         f.close()
 
-                    # add file to cache
+                    # adicionando ele na cache
                     cache_control.cache[res] = [size_file, packages, True]
                     cache_control.cache_available -= size_file
 
                     print("[port: %s] file '%s' on cache" % (addr[1], res))
 
-                # block cache file
+                # informando que o arquivo esta bloqueado
                 cache_control.cache[res][2] = True
 
-                # query cache file to be sent
+                # salvando informação da cache em variaveis temporarias
                 file_in_cache = cache_control.cache[res]
-                size_file = file_in_cache[0]
                 packages = file_in_cache[1]
 
-                # flush file from cache
+                # desbloqueando o arquivo na cache
                 cache_control.cache[res][2] = False
 
                 # -------
-                # sending through the cache
+                # enviando o arquivo através das variaveis temporarias.
                 print("[port: %s] sending file '%s' to client through the cache" % (
                     addr[1], res))
                 package = pickle.dumps(True)
@@ -115,14 +114,14 @@ def threaded(clientSocket, addr, directory):
                 sleep(1)
                 print("[port: %s] sent file '%s' to client" % (
                     addr[1], res))
-        # if file does not exist
+        # Se o arquivo não existe
         else:
             print("[port: %s] file '%s' not found" % (addr[1], res))
-            # warns that file does not exist
+            # informando que o arquivo não existe
             package = pickle.dumps(False)
             clientSocket.send(package)
 
-        #disabilitando o lock
+        #desabilitando o lock
         lock_control.lock.release()
 
     print("[port: %s] closed connection with client" % (addr[1]))
