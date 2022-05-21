@@ -2,6 +2,7 @@ import socket
 import json
 import numpy as np
 import time
+import pickle
 
 lines = open("ratings.dat").read().splitlines()
 
@@ -28,6 +29,9 @@ print('passou connection')
 while True:
     print('Enviando linhas')
     myline = np.random.choice(lines,200)
-    print(myline)
-    connection.send(bytes((myline+'\n').encode('utf-8')))
+    #print(myline)
+    #serialized_data = pickle.dumps(myline, protocol=2)
+    myline2 = np.array2string(myline)
+    serialized_data = pickle.dumps((myline2))
+    connection.send(serialized_data)
     time.sleep(30)
