@@ -5,22 +5,29 @@ import time
 
 lines = open("ratings.dat").read().splitlines()
 
-def lines_generator():
-    while True:
-        myline = np.random.choice(lines,200)
-        yield json.dumps(myline)
-        time.sleep(30)
-
 hostip = '127.0.0.1'
-portno = 56789 
+portno = 56789
 
 #listener need to be started before!
 #try: netcat -lkp 56789
 #before you start with spark streaming
 
-soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
-soc.connect((hostip, portno))
+soc = socket.socket()
 
-it = line_generator()
-for l in it:
-    soc.send(l.encode('utf8'))
+
+print('antes connect')
+soc.bind((hostip, portno))
+
+print('------')
+
+soc.listen(1)
+
+(connection, a) = soc.accept()
+print('passou connection')
+
+while True:
+    print('Enviando linhas')
+    myline = np.random.choice(lines,200)
+    print(myline)
+    connection.send(bytes((myline+'\n').encode('utf-8')))
+    time.sleep(30)
