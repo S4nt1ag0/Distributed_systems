@@ -13,9 +13,9 @@ soc = socket.socket()
 soc.bind((hostip, portno))
 
 soc.listen(1)
-
+print("Aguardando comunicação...")
 (connection, a) = soc.accept()
-
+print("     OK")
 while True:
     print('Enviando linhas')
     lines = np.random.choice(lines,200)

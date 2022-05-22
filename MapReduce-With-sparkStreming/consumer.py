@@ -18,11 +18,7 @@ linesJSON.pprint()
 
 movieRatings = linesJSON.map(lambda x: (int(x.split('::')[1]), [float(x.split('::')[2]),1]))
 
-totalOfMovieRatings = movieRatings.reduceByKey(lambda x, y: [x[0] + y[0],x[1]+y[1]])
-linesJSON.map(lambda line: np.fromstring(line,np.int8))
-
-print(lines)
-lines.pprint()
+print(movieRatings)
 
 streamingSocket.start()
 
