@@ -18,7 +18,7 @@ print("Aguardando comunicação...")
 print("     OK")
 while True:
     print('Enviando linhas')
-    lines = np.random.choice(lines,200)
+    lines = np.random.choice(lines,20)
     for line in lines:
         lineJSON = json.dumps(line)
         connection.send(bytes((lineJSON+'\n').encode('utf-8')))
