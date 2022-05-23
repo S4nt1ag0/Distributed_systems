@@ -1,8 +1,11 @@
 import findspark
 findspark.init()
 
-import json
+import socket
+import pickle
 from pyspark.sql import SparkSession
+
+BUFFER_SIZE = 1024
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -16,6 +19,18 @@ def load_movie_names(filename):
     return movie_names
 
 movie_names=load_movie_names('movies.dat')
+
+s = socket.socket()
+# conectando o socket com o servidor
+s.connect(('127.0.0.1', 56789))
+
+data = s.recv(BUFFER_SIZE)
+while data:
+    res = pickle.loads(data)
+    print(res)
+    data = s.recv(BUFFER_SIZE)
+
+print("-----------------------------------------------------------")
 
 lines=spark.sparkContext.textFile('ratings.dat')
 
