@@ -21,14 +21,12 @@ movie_names=load_movie_names('movies.dat')
 
 s = socket.socket()
 # conectando o socket com o servidor
-s.connect(('127.0.0.1', 56789))
+s.connect(('127.0.0.1', 56797))
 
-data = s.recv(4096)
+data = s.recv(16384)
 while data:
     res = pickle.loads(data)
-    print(res)
     listReceive = res.split('\n')
-    print(listReceive)
     listRDD = spark.sparkContext.parallelize(listReceive)
     movieRatings = listRDD.map(lambda x: (int(x.split('::')[1]), [float(x.split('::')[2]), 1]))
     totalOfMovieRatings = movieRatings.reduceByKey(lambda x, y: [x[0] + y[0], x[1] + y[1]])
@@ -39,4 +37,4 @@ while data:
     for result in results:
         print(movie_names[result[1]], ",", round(result[0], 2))
 
-    data = s.recv(4096)
+    data = s.recv(16384)
