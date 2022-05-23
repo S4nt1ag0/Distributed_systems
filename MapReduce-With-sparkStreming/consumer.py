@@ -29,7 +29,7 @@ while data:
     print(res)
     listReceive = res.split('\n')
     print(listReceive)
-    listRDD = spark.sparkContext.paralleliza(listReceive)
+    listRDD = spark.sparkContext.parallelize(listReceive)
     movieRatings = listRDD.map(lambda x: (int(x.split('::')[1]), [float(x.split('::')[2]), 1]))
     totalOfMovieRatings = movieRatings.reduceByKey(lambda x, y: [x[0] + y[0], x[1] + y[1]])
     FinalMoviexRating = totalOfMovieRatings.mapValues(lambda x: x[0] / x[1])
