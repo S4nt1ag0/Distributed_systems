@@ -19,8 +19,11 @@ print("     OK")
 while True:
     print('Enviando linhas')
     lines = np.random.choice(lines,20)
+    batch = ''
     for line in lines:
-        lineJSON = json.dumps(line)
-        connection.send(bytes((lineJSON+'\n').encode('utf-8')))
+        batch += line + '\n'
+
+    data = pickle.dumps(batch)
+    connection.send(data)
     print("200 linhas enviadas")
     time.sleep(30)

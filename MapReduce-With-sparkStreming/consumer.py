@@ -8,7 +8,6 @@ from pyspark.sql import SparkSession
 BUFFER_SIZE = 1024
 
 spark = SparkSession.builder.getOrCreate()
-
 def load_movie_names(filename):
     movie_names={}
     with open(filename, encoding= 'ISO-8859-1') as f:
@@ -24,21 +23,20 @@ s = socket.socket()
 # conectando o socket com o servidor
 s.connect(('127.0.0.1', 56789))
 
-data = s.recv(BUFFER_SIZE)
+data = s.recv(4096)
 while data:
     res = pickle.loads(data)
     print(res)
-    data = s.recv(BUFFER_SIZE)
+    listReceive = res.split('\n')
+    print(listReceive)
+    listRDD = spark.sparkContext.paralleliza(listReceive)
+    movieRatings = listRDD.map(lambda x: (int(x.split('::')[1]), [float(x.split('::')[2]), 1]))
+    totalOfMovieRatings = movieRatings.reduceByKey(lambda x, y: [x[0] + y[0], x[1] + y[1]])
+    FinalMoviexRating = totalOfMovieRatings.mapValues(lambda x: x[0] / x[1])
+    FinalRatingxMovie = FinalMoviexRating.map(lambda kv: (kv[1], kv[0]))
+    sortedMovies = FinalRatingxMovie.sortByKey(False)
+    results = sortedMovies.take(10)
+    for result in results:
+        print(movie_names[result[1]], ",", round(result[0], 2))
 
-print("-----------------------------------------------------------")
-
-lines=spark.sparkContext.textFile('ratings.dat')
-
-movieRatings = lines.map(lambda x: (int(x.split('::')[1]), [float(x.split('::')[2]),1]))
-totalOfMovieRatings = movieRatings.reduceByKey(lambda x, y: [x[0] + y[0],x[1]+y[1]])
-FinalMoviexRating=totalOfMovieRatings.mapValues(lambda x: x[0] / x[1])
-FinalRatingxMovie=FinalMoviexRating.map(lambda kv: (kv[1], kv[0]))
-sortedMovies = FinalRatingxMovie.sortByKey(False)
-results= sortedMovies.take(10)
-for result in results:
-    print(movie_names[result[1]],",", round(result[0], 2))
+    data = s.recv(4096)
