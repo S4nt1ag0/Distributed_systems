@@ -5,7 +5,7 @@ import socket
 import pickle
 from pyspark.sql import SparkSession
 
-BUFFER_SIZE = 1024
+BUFFER_SIZE = 16384
 
 spark = SparkSession.builder.getOrCreate()
 def load_movie_names(filename):
@@ -20,10 +20,10 @@ def load_movie_names(filename):
 movie_names=load_movie_names('movies.dat')
 
 s = socket.socket()
-# conectando o socket com o servidor
+# conectando o socket com o producer
 s.connect(('127.0.0.1', 56797))
 
-data = s.recv(16384)
+data = s.recv(BUFFER_SIZE)
 while data:
     res = pickle.loads(data)
     listReceive = res.split('\n')
@@ -37,4 +37,4 @@ while data:
     for result in results:
         print(movie_names[result[1]], ",", round(result[0], 2))
 
-    data = s.recv(16384)
+    data = s.recv(BUFFER_SIZE)
