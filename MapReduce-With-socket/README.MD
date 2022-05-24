@@ -110,7 +110,7 @@ while data:
 ***
 ### <a id="mapReduce" />MapReduce
 
-With the data from the lines, the task of processing them was divided into a few steps
+With the data from the lines, the task of processing them was divided into five steps
 
 1) Convert the received bytes into a list and then into an RDD list (a list that has the spark map and reduce methods).
 ```sh
