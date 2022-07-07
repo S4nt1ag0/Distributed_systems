@@ -3,7 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['ipv4-amazon:9092'],
+  brokers: ['34.227.109.64:9092'],
 })
 
 const producer = kafka.producer()
@@ -37,4 +37,10 @@ app.post('/notify', jsonParser, (req, res) => {
 app.listen(9000, async ()=>{
   console.log('foi zeze')
   await producer.connect()
+  enviaNotificacao(
+    {
+    "topic":"quickstart-events",
+    "message":"enviando por outra maquina"
+    }
+    )
 })
