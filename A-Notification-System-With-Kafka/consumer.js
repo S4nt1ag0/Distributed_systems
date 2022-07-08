@@ -16,15 +16,6 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-async function enviaNotificacao(data) {
-  await producer.send({
-    topic: data.topic,
-    messages: [
-      { value: data.message},
-    ],
-  })
-}
-
 
 app.listen(9000, async ()=>{
   await consumer.connect()
