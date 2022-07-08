@@ -6,7 +6,9 @@ const kafka = new Kafka({
   brokers: ['ec2-18-208-190-1.compute-1.amazonaws.com:9092'],
 })
 
-const producer = kafka.producer()
+const producer = kafka.producer(
+  allowAutoTopicCreation: true
+)
 
 
 const app = express()
