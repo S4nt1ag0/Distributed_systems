@@ -3,7 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['ec2-35-172-229-58.compute-1.amazonaws.com:9092'],
+  brokers: ['ec2-18-208-190-1.compute-1.amazonaws.com:9092'],
 })
 
 const producer = kafka.producer()
