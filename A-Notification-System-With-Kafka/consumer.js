@@ -2,8 +2,9 @@ const { Kafka } = require('kafkajs')
 
 const kafka = new Kafka({
   clientId: 'my-app',
-  brokers: ['ipv4-amazon:9092'],
+  brokers: ['ec2-35-172-229-58.compute-1.amazonaws.com:9092'],
 })
+
 
 const consumer = kafka.consumer({ groupId: 'test-group' })
 
