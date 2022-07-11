@@ -30,19 +30,11 @@ async function enviaNotificacao(data) {
 
 app.post('/notify', jsonParser, (req, res) => {
   let data = req.body
-  console.log(data)
   res.send(data);
   enviaNotificacao(data)
 })
 
 
 app.listen(9000, async ()=>{
-  console.log('foi zeze')
   await producer.connect()
-  enviaNotificacao(
-    {
-    "topic":"quickstart-events",
-    "message":"enviando por outra maquina"
-    }
-    )
 })
