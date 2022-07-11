@@ -25,9 +25,9 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-server.listen(9000, async ()=>{
+server.listen(9005, async ()=>{
   await consumer.connect()
-  await consumer.subscribe({ topic: 'test-topic', fromBeginning: true })
+  await consumer.subscribe({ topic: 'investimentos', fromBeginning: true })
   
   io.on('connection', async (socket)=>{
 
