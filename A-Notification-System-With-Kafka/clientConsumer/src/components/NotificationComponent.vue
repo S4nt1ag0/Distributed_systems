@@ -13,7 +13,7 @@ export default {
     data(){
         return{
             messages:[],
-            connection: io('http://localhost:8000')
+            connection: io('ec2-34-204-2-241.compute-1.amazonaws.com:9000')
         }
     },
   mounted(){
