@@ -1,5 +1,4 @@
 const { Kafka } = require('kafkajs')
-const express = require('express')
 const bodyParser = require('body-parser')
 const kafka = new Kafka({
   clientId: 'my-app',
