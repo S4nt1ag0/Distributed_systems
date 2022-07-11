@@ -29,7 +29,7 @@ server.listen(8000, async ()=>{
   await consumer.connect()
   await consumer.subscribe({ topic: 'test-topic', fromBeginning: true })
   
-  io.on('connection', (socket)=>{
+  io.on('connection', async (socket)=>{
 
     await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
