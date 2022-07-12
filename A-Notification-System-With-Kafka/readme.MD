@@ -128,6 +128,7 @@ As in the producer, a server is started, listening on port 9005. When a client c
 
 
 <a id="FinalClient" />Final Client
+-
 
 The final client basically consists of a VueJS component. Since VueJS is reactive, it re-renders when one of its used properties changes. Then, an array was created with the messages that it should display on screen (a property used), and the socket connection was established with port 9005. Then, whenever the consumer sent a message from kafka, it received, changed its props and consequently re-rendered this message to the screen.
 
@@ -160,6 +161,8 @@ export default {
 </script>
 ```
 <a id="architecture" />Final Architecture
+-
+
 Thinking about the case where several customers would be sending notifications to their end customers. a new producer instance was created and a loadBalance to distribute the load between the servers. So clients who want to send notifications, now need to send them through load balance, like this:
 
 <img src="./assets/requestExample.jpg" alt="request example">
