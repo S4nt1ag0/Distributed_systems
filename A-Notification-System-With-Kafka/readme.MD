@@ -65,7 +65,7 @@ const kafka = new Kafka({
 Now we will see the specifics of each one, starting with the producer.
 
 ***
-### <a id="producer" />Producer
+## <a id="producer" />Producer
 
 The producer is created with allowAutoTopicCreation: true, to allow that if the user passes a topic that does not yet exist in the kafka server, it is automatically created
 
